@@ -204,6 +204,7 @@
 			})).isEnabled = isGraphEnabled;
 		}
 		
+		/*
 		editorUi.actions.put('exportXml', new Action(mxResources.get('formatXml') + '...', function()
 		{
 			var div = document.createElement('div');
@@ -241,7 +242,7 @@
 			
 			editorUi.showDialog(dlg.container, 300, 180, true, true);
 		}));
-		
+		*/
 		editorUi.actions.put('exportUrl', new Action(mxResources.get('url') + '...', function()
 		{
 			editorUi.showPublishLinkDialog(mxResources.get('url'), true, null, null,
