@@ -1613,6 +1613,48 @@
 		
 		return basename;
 	};
+
+	/**
+	 * Metodo de peticion de archivo a MICROSERVICIO
+	 */
+	EditorUi.prototype.codeGenService = function(nonCompressed, addShadow, ignoreSelection, currentPage, pageVisible, transparent, scale, border, grid)
+	{
+		try
+		{
+			ignoreSelection = (ignoreSelection != null) ? ignoreSelection : this.editor.graph.isSelectionEmpty();
+			var basename = this.getBaseFilename(!currentPage);
+			var filename = basename + '.' + format;
+			
+			var data = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+		    this.getFileData(true, null, null, null, ignoreSelection, currentPage,
+		    	null, null, null, nonCompressed);
+		    	
+			//alert(data);
+			// Enviar 'data' a microservicio y guardar retorno ... 
+			fetch('http://localhost:8082/generar',  {
+				method: 'POST',
+				headers: {
+				  'Accept': 'application/json',
+				  'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({xml: data})
+			})
+			.then(resp => resp.blob())
+			.then(blob => {
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				// the filename you want
+				a.download = 'lumen.txt';
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+			})
+			.catch((e) => this.handleError(e));
+		}
+		catch(e){ this.handleError(e) }
+	};
 	
 	/**
 	 * Translates this point by the given vector.
