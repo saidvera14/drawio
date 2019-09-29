@@ -203,8 +203,63 @@
 				}
 			})).isEnabled = isGraphEnabled;
 		}
+
+		//	NOTA: mxResources obtiene el texto en el idioma configurado de la app ... 
+		//	Para agregar una nueva definicion (resource), se debe integrar en 
+		//	https://docs.google.com/spreadsheet/ccc?key=0AmQEO36liL4FdDJLWVNMaVV2UmRKSnpXU09MYkdGbEE
 		
-		/*
+		//	accion 'exportObj' definida arriba en this.addMenuItems()
+		editorUi.actions.put('exportObj', new Action('CODE...', function() {
+
+			//	Crea primer dialogo
+			//	+	selection only
+			//	+	all pages 
+			//	-	compressed (eliminamos opcion para nuestro modulo ... no es necesario preguntar)
+
+			var div = document.createElement('div');
+			div.style.whiteSpace = 'nowrap';
+			var noPages = editorUi.pages == null || editorUi.pages.length <= 1;
+			
+			var hd = document.createElement('h3');
+			mxUtils.write(hd, mxResources.get('formatXml'));
+			hd.style.cssText = 'width:100%;text-align:center;margin-top:0px;margin-bottom:4px';
+			div.appendChild(hd);
+			
+			var selection = editorUi.addCheckbox(div, mxResources.get('selectionOnly'),
+				false, graph.isSelectionEmpty());
+			/**
+			 * 	Se oculta checkbox de comprimido ... se asume que siempre se envia en formato
+			 *  comprimido, para enviar 'payload' pequeño a nuestro microservicio 
+			 */
+
+			//var compressed = editorUi.addCheckbox(div, mxResources.get('compressed'), true);
+			var pages = editorUi.addCheckbox(div, mxResources.get('allPages'), !noPages, noPages);
+			pages.style.marginBottom = '16px';
+			
+			mxEvent.addListener(selection, 'change', function()
+			{
+				if (selection.checked)
+				{
+					pages.setAttribute('disabled', 'disabled');
+				}
+				else
+				{
+					pages.removeAttribute('disabled');
+				}
+			});
+			
+			var dlg = new CustomDialog(editorUi, div, mxUtils.bind(this, function()
+			{
+				//	Se define variable de compresion...
+				const xmlComprimido = false;
+				editorUi.codeGenService(xmlComprimido, null,
+					!selection.checked, noPages || !pages.checked);
+			}), null, mxResources.get('export'));
+			
+			editorUi.showDialog(dlg.container, 300, 180, true, true);
+
+		}));
+		
 		editorUi.actions.put('exportXml', new Action(mxResources.get('formatXml') + '...', function()
 		{
 			var div = document.createElement('div');
@@ -242,7 +297,7 @@
 			
 			editorUi.showDialog(dlg.container, 300, 180, true, true);
 		}));
-		*/
+		
 		editorUi.actions.put('exportUrl', new Action(mxResources.get('url') + '...', function()
 		{
 			editorUi.showPublishLinkDialog(mxResources.get('url'), true, null, null,
@@ -1814,7 +1869,7 @@
 				this.addMenuItems(menu, ['exportVsdx'], parent);
 			}
 
-			this.addMenuItems(menu, ['-', 'exportHtml', 'exportXml', 'exportUrl'], parent);
+			this.addMenuItems(menu, ['-', 'exportHtml', 'exportXml', 'exportObj', 'exportUrl'], parent);
 
 			if (!editorUi.isOffline())
 			{
