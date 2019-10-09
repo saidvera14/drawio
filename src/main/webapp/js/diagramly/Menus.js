@@ -221,7 +221,7 @@
 			var noPages = editorUi.pages == null || editorUi.pages.length <= 1;
 			
 			var hd = document.createElement('h3');
-			mxUtils.write(hd, mxResources.get('formatXml'));
+			mxUtils.write(hd, 'Code generation service');	
 			hd.style.cssText = 'width:100%;text-align:center;margin-top:0px;margin-bottom:4px';
 			div.appendChild(hd);
 			
@@ -235,6 +235,32 @@
 			//var compressed = editorUi.addCheckbox(div, mxResources.get('compressed'), true);
 			var pages = editorUi.addCheckbox(div, mxResources.get('allPages'), !noPages, noPages);
 			pages.style.marginBottom = '16px';
+
+			/**
+			 * 	Se crea elemento de seleccion de lenguaje.
+			 * 	Se toma por default la opcion PHP
+			 */
+
+			//	Se crea contenedor para selector de codigo
+			var codelangDiv = document.createElement('div');
+			codelangDiv.style.cssText = 'display: flex; justify-content: center; align-items: center; width: 100%';			
+			
+			//	Opcion de codigo en PHP
+			var phpOpc =   document.createElement('option');
+			phpOpc.value ='PHP';
+			phpOpc.innerText = "PHP";
+			
+			//	Instanciamiento de selector de opciones
+			var codelang = document.createElement('select');
+			codelang.style.cssText = 'width: 75px;';
+			codelang.add(phpOpc);
+
+			//	Se anida selector en contenedor flexible
+			codelangDiv.appendChild(codelang);
+
+			//	Se integra contenedor de seleccion en dialogo de Exportar Codigo
+			div.appendChild(codelangDiv);
+
 			
 			mxEvent.addListener(selection, 'change', function()
 			{
@@ -247,13 +273,16 @@
 					pages.removeAttribute('disabled');
 				}
 			});
-			
+
+			//	Al hacer click en export, se invoca el siguiente dialogo...
 			var dlg = new CustomDialog(editorUi, div, mxUtils.bind(this, function()
 			{
 				//	Se define variable de compresion...
-				const xmlComprimido = false;
-				editorUi.codeGenService(xmlComprimido, null,
-					!selection.checked, noPages || !pages.checked);
+				
+				// const xmlComprimido = false;
+				// editorUi.codeGenService(xmlComprimido, null,
+				// 	!selection.checked, noPages || !pages.checked);
+				alert("lenguaje: " + codelang.value);
 			}), null, mxResources.get('export'));
 			
 			editorUi.showDialog(dlg.container, 300, 180, true, true);
