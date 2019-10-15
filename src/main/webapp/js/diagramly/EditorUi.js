@@ -1617,7 +1617,7 @@
 	/**
 	 * Metodo de peticion de archivo a MICROSERVICIO
 	 */
-	EditorUi.prototype.codeGenService = function(nonCompressed, addShadow, ignoreSelection, currentPage, pageVisible, transparent, scale, border, grid)
+	EditorUi.prototype.codeGenService = function(nonCompressed, codelang, ignoreSelection, currentPage, pageVisible, transparent, scale, border, grid)
 	{
 		try
 		{
@@ -1629,19 +1629,22 @@
 		    this.getFileData(true, null, null, null, ignoreSelection, currentPage,
 		    	null, null, null, nonCompressed);
 		    	
-			//alert(data);
+			alert(data);
 			// Enviar 'data' a microservicio y guardar retorno ... 
-			fetch('http://localhost:8082/generar',  {
+			fetch('http://localhost:5001/',  {
 				method: 'POST',
 				headers: {
 				  'Accept': 'application/json',
 				  'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({xml: data})
+				body: JSON.stringify({ lang: codelang, xml: data })
 			})
-			.then(resp => resp.blob())
-			.then(blob => {
-				const url = window.URL.createObjectURL(blob);
+			.then(resp => {
+				if(resp.ok) return resp.json()
+			})
+			.then(json => {
+				alert(JSON.stringify(json))
+				/*const url = window.URL.createObjectURL(blob);
 				const a = document.createElement('a');
 				a.style.display = 'none';
 				a.href = url;
@@ -1649,9 +1652,12 @@
 				a.download = 'lumen.txt';
 				document.body.appendChild(a);
 				a.click();
-				window.URL.revokeObjectURL(url);
+				window.URL.revokeObjectURL(url);*/
 			})
-			.catch((e) => this.handleError(e));
+			.catch((e) => {
+				alert(e);
+				this.handleError(e);
+			});
 		}
 		catch(e){ this.handleError(e) }
 	};

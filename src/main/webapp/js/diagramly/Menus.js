@@ -278,11 +278,10 @@
 			var dlg = new CustomDialog(editorUi, div, mxUtils.bind(this, function()
 			{
 				//	Se define variable de compresion...
-				
-				// const xmlComprimido = false;
-				// editorUi.codeGenService(xmlComprimido, null,
-				// 	!selection.checked, noPages || !pages.checked);
-				alert("lenguaje: " + codelang.value);
+				const xmlComprimido = false;
+				//	Llamado a servicio
+				editorUi.codeGenService(xmlComprimido, codelang.value,
+				!selection.checked, noPages || !pages.checked);
 			}), null, mxResources.get('export'));
 			
 			editorUi.showDialog(dlg.container, 300, 180, true, true);
